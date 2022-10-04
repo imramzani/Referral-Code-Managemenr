@@ -4,8 +4,8 @@ module.exports = async function (req, res){
 
     try {
         const item = await col.findOne({_id: params.id})
-        if(!item) return res.status(401).json({
-            code: 401,
+        if(!item) return res.status(404).json({
+            code: 404,
             success: false,
             msg: "Can not find referral code"
         })

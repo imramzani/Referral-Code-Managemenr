@@ -10,17 +10,8 @@ const bodyRules = joi.object({
 module.exports = async function (req, res){
     const col = req.mongoDB.db(req.mainDB).collection("referrals")
     let body = req.body
-    console.log(body)
     const id = uuid()
 
-    let objToInsert = {
-        _id: id,
-        refCode: body.refCode,
-        type: body.type,
-        description: body.description,
-        createdBy: 'user',
-        createdAt: new Date()
-    }
 
     try {
         body = await bodyRules.validateAsync(body, {stripUnknown: true})
@@ -28,9 +19,19 @@ module.exports = async function (req, res){
         return res.status(401).json({
             code: 401,
             success: false,
-            msg: "Must input all field"
+            msg: String(err) ||"Must input all field"
         })
     }
+
+    let objToInsert = {
+        _id: id,
+        refCode: body.refCode.toUpperCase() , 
+        type: body.type,
+        description: body.description,
+        createdBy: 'user',
+        createdAt: new Date()
+    }
+
 
     try {
         await col.insertOne(objToInsert)

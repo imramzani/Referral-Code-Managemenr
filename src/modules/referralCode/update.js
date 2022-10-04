@@ -1,13 +1,25 @@
-module.exports = async function (req, res){
-    const col = req.mongoDB.db(req.mainDB).collection("drugs")
+const joi = require('joi')
+
+module.exports = async function (req, res) {
+    const col = req.mongoDB.db(req.mainDB).collection("referrals")
     const params = req.params
     let body = req.body
 
     const bodyRules = joi.object({
-        refCode: joi.string().required().error( new Error ('Must input referral code')),
-        type: joi.string().required().error( new Error ('Must input type')),
-        description: joi.string().required().error( new Error ('Must input description')),
+        refCode: joi.string().required().error(new Error('Must input referral code')),
+        type: joi.string().required().error(new Error('Must input type')),
+        description: joi.string().required().error(new Error('Must input description')),
     })
+
+    try {
+        body = await bodyRules.validateAsync(body, { stripUnknown: true })
+    } catch (err) {
+        return res.status(401).json({
+            code: 401,
+            success: false,
+            msg: String(err) ||"Must input all field"
+        })
+    }
 
     const objToUpdate = {
         ...body,
@@ -15,25 +27,15 @@ module.exports = async function (req, res){
     }
 
     try {
-        body = await bodyRules.validateAsync(body, {stripUnknown: true})
-    } catch (err) {
-        return res.status(401).json({
-            code: 401,
-            success: false,
-            msg: "Must input all field"
-        })
-    }
-
-    try {
-        const item = await col.findOne({_id: params.id})
-        if(!item) return res.status(401).json({
-            code: 401,
+        const item = await col.findOne({ _id: params.id })
+        if (!item) return res.status(404).json({
+            code: 404,
             success: false,
             msg: "Can not find referral code"
         })
 
-        let updated = await col.updateOne({_id: params.id}, {$set: objToUpdate})
-        updated = await col.findOne({_id: params.id})
+        let updated = await col.updateOne({ _id: params.id }, { $set: objToUpdate })
+        updated = await col.findOne({ _id: params.id })
         return res.status(200).json({
             code: 200,
             success: true,

@@ -5,7 +5,7 @@ const refModule = require("../modules/referralCode")
 module.exports = function (app) {
     const router = express.Router()
 
-    groupPath = '/medicine'
+    groupPath = '/referrals'
     router.get("/list", refModule.listHandler)
     router.post("/add", refModule.addHandler)
     router.post("/edit/:id", refModule.updateHandler)
