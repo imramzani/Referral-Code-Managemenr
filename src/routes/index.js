@@ -1,24 +1,17 @@
 const express = require('express')
 const app = express()
-const authModule = require("../modules/auth")
-const medModule = require("../modules/medicines")
-const needAuth = require('../middlewares/authentication')
+const refModule = require("../modules/referralCode")
 
-module.exports = function (app){
-let groupPath = '/auth'
-const routerAdmin = express.Router()
-routerAdmin.post("/register",authModule.registerHandler )
-routerAdmin.post("/login",authModule.loginHandler )
+module.exports = function (app) {
+    const router = express.Router()
 
-groupPath = '/medicine'
-routerAdmin.use(needAuth)
-routerAdmin.get("/list", medModule.listDrugHandler)
-routerAdmin.post("/add", medModule.addDrugsHandler)
-routerAdmin.post("/edit/:id", medModule.updateHandler)
-routerAdmin.post("/delete/:id", medModule.deleteHandler)
-routerAdmin.get("/:id", medModule.getOneHandler)
-routerAdmin.post("/:id", medModule.updateHandler)
-app.use(`/admin${groupPath}`, routerAdmin)
-
+    groupPath = '/medicine'
+    router.get("/list", refModule.listHandler)
+    router.post("/add", refModule.addHandler)
+    router.post("/edit/:id", refModule.updateHandler)
+    router.post("/delete/:id", refModule.deleteHandler)
+    router.get("/:id", refModule.getOneHandler)
+    router.post("/:id", refModule.updateHandler)
+    app.use(`${groupPath}`, router)
 
 }

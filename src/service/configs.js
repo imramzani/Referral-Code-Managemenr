@@ -14,8 +14,6 @@ function getConfig(){
             db: process.env.MONGODB_DB
         },
         port: process.env.PORT,
-        jwtSecret: process.env.JWT_SECRET,
-        jwtTimeOut: process.env.JWT_TIMEOUT,
         
     }
     return configs
