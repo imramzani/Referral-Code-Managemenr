@@ -11,7 +11,6 @@ module.exports = function (app) {
     router.post("/edit/:id", refModule.updateHandler)
     router.post("/delete/:id", refModule.deleteHandler)
     router.get("/:id", refModule.getOneHandler)
-    router.post("/:id", refModule.updateHandler)
     app.use(`${groupPath}`, router)
 
 }
